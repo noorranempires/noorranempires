@@ -222,3 +222,20 @@ font-size:17px;
 }
 
 }
+.footer{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.footer a{
+    color:#FFD700;
+    text-decoration:none;
+    margin:0 10px;
+    font-weight:bold;
+}
+
+.footer a:hover{
+    color:#ffffff;
+}
