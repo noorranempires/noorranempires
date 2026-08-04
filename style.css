@@ -268,3 +268,8 @@ font-size:17px;
     opacity:.9;
     font-size:14px;
 }
+.logo img {
+    height: 60px;
+    width: auto;
+    display: block;
+}
