@@ -272,3 +272,39 @@ font-size:17px;
     width: auto;
     display: block;
 }
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.nav-links{
+    display:flex;
+    gap:35px;
+    align-items:center;
+}
+
+.nav-links a{
+    color:#ffffff;
+    text-decoration:none;
+    font-weight:600;
+    font-size:18px;
+}
+
+.nav-links a:hover{
+    color:#ffd700;
+}
+
+.logo img{
+    height:70px;
+    width:auto;
+}
+
+.order-btn{
+    background:#ffffff;
+    color:#7b2cbf;
+    padding:12px 24px;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:600;
+}
