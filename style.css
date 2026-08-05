@@ -21,6 +21,7 @@ background:linear-gradient(90deg,#4b0082,#7b2cbf,#d4af37);
 padding:18px 8%;
 z-index:1000;
 box-shadow:0 5px 20px rgba(0,0,0,.15);
+    backdrop-filter: blur(10px);
 }
 
 nav{
