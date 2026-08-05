@@ -309,3 +309,18 @@ font-size:17px;
     text-decoration:none;
     font-weight:600;
 }
+background: rgba(123, 44, 191, 0.85);
+backdrop-filter: blur(10px);
+.logo img{
+    height: 80px;
+}
+.nav-links a{
+    font-size: 18px;
+    font-weight: 600;
+}
+order-btn:hover{
+    background:#ffd700;
+    color:#4b0082;
+    transform:scale(1.05);
+    transition:0.3s;
+}
