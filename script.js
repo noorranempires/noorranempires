@@ -34,3 +34,18 @@ window.addEventListener("scroll", () => {
 window.onload = () => {
   console.log("Welcome to NOORRANEMPIRES");
 }
+// Shopping Cart Functions
+let cart = [];
+
+function addToCart(name, price) {
+    cart.push({ name, price });
+    alert(name + " has been added to your cart!");
+}
+
+function buyNow(name, price) {
+    alert(
+        "Buying: " + name +
+        "\nPrice: Rs. " + price +
+        "\n\nCheckout page coming soon."
+    );
+}
