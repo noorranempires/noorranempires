@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | NOORRANEMPIRES</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #faf7ff;
+            color: #2d2140;
+        }
+
+        header {
+            background: linear-gradient(90deg, #6b35b5, #b8860b);
+            padding: 18px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header img {
+            width: 150px;
+            height: auto;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .cart-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6b35b5;
+            margin-bottom: 35px;
+        }
+
+        .cart-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .item-info h3 {
+            margin: 0 0 8px;
+        }
+
+        .item-info p {
+            margin: 5px 0;
+            color: #777;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quantity button {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 50%;
+            background: #6b35b5;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .remove-btn {
+            border: none;
+            background: #e74c3c;
+            color: white;
+            padding: 9px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            background: white;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 15px;
+            text-align: right;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .cart-total h2 {
+            color: #6b35b5;
+        }
+
+        .checkout-btn {
+            background: #d4a500;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty-cart {
+            text-align: center;
+            background: white;
+            padding: 50px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .empty-cart a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #6b35b5;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <img src="logo.png.png" alt="NOORRANEMPIRES Logo">
+    <a href="index.html">← Continue Shopping</a>
+</header>
+
+<div class="cart-container">
+
+    <h1>🛒 Your Shopping Cart</h1>
+
+    <div id="cartItems"></div>
+
+    <div id="cartTotal"></div>
+
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem("noorranCart")) || [];
+
+    function displayCart() {
+
+        const cartItems = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+
+        cartItems.innerHTML = "";
+
+        if (cart.length === 0) {
+
+            cartItems.innerHTML = `
+                <div class="empty-cart">
+                    <h2>Your cart is empty</h2>
+                    <p>Add some beautiful products to your cart.</p>
+                    <a href="index.html">Shop Now</a>
+                </div>
+            `;
+
+            cartTotal.innerHTML = "";
+            return;
+        }
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            cartItems.innerHTML += `
+                <div class="cart-item">
+
+                    <div class="item-info">
+                        <h3>${item.name}</h3>
+                        <p>Price: Rs. ${item.price.toLocaleString()}</p>
+                    </div>
+
+                    <div class="quantity">
+                        <button onclick="decreaseQuantity(${index})">−</button>
+
+                        <strong>${item.quantity}</strong>
+
+                        <button onclick="increaseQuantity(${index})">+</button>
+                    </div>
+
+                    <strong>
+                        Rs. ${itemTotal.toLocaleString()}
+                    </strong>
+
+                    <button class="remove-btn"
+                        onclick="removeItem(${index})">
+                        Remove
+                    </button>
+
+                </div>
+            `;
+        });
+
+        cartTotal.innerHTML = `
+            <div class="cart-total">
+
+                <h2>
+                    Total: Rs. ${total.toLocaleString()}
+                </h2>
+
+                <button class="checkout-btn"
+                    onclick="checkout()">
+                    Proceed to Checkout
+                </button>
+
+            </div>
+        `;
+    }
+
+    function increaseQuantity(index) {
+        cart[index].quantity++;
+        saveCart();
+        displayCart();
+    }
+
+    function decreaseQuantity(index) {
+
+        if (cart[index].quantity > 1) {
+            cart[index].quantity--;
+        } else {
+            cart.splice(index, 1);
+        }
+
+        saveCart();
+        displayCart();
+    }
+
+    function removeItem(index) {
+
+        cart.splice(index, 1);
+
+        saveCart();
+        displayCart();
+    }
+
+    function saveCart() {
+        localStorage.setItem(
+            "noorranCart",
+            JSON.stringify(cart)
+        );
+    }
+
+    function checkout() {
+
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        alert(
+            "Thank you for shopping with NOORRANEMPIRES! 💜\n\n" +
+            "Your checkout system will be connected next."
+        );
+    }
+
+    displayCart();
+</script>
+
+</body>
+</html>
