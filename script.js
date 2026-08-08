@@ -35,17 +35,37 @@ window.onload = () => {
   console.log("Welcome to NOORRANEMPIRES");
 }
 // Shopping Cart Functions
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("noorranCart")) || [];
+
+function saveCart() {
+    localStorage.setItem("noorranCart", JSON.stringify(cart));
+}
 
 function addToCart(name, price) {
-    cart.push({ name, price });
+    const existingItem = cart.find(item => item.name === name);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            name: name,
+            price: price,
+            quantity: 1
+        });
+    }
+
+    saveCart();
+
     alert(name + " has been added to your cart!");
 }
 
 function buyNow(name, price) {
+    addToCart(name, price);
+
     alert(
-        "Buying: " + name +
-        "\nPrice: Rs. " + price +
-        "\n\nCheckout page coming soon."
+        "Your item has been added to the cart.\n\n" +
+        "Product: " + name + "\n" +
+        "Price: Rs. " + price.toLocaleString() + "\n\n" +
+        "We are preparing your checkout page."
     );
 }
