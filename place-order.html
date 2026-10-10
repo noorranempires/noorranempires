@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place Order | NOORRANEMPIRES</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #faf7ff;
+      color: #2d2140;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 50px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+      text-align: center;
+    }
+
+    h1 { color: #6b35b5; }
+
+    .details {
+      text-align: left;
+      background: #faf7ff;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    a, button {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 13px 22px;
+      border: 0;
+      border-radius: 25px;
+      background: #6b35b5;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .note { color: #8a5b00; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Review Your Order</h1>
+    <p>Please check your delivery details before placing your order.</p>
+
+    <div class="details" id="customerDetails"></div>
+    <div class="details" id="orderDetails" style="margin-top:15px"></div>
+
+    <p class="note">
+      Your order has not been sent to the store yet.
+    </p>
+
+    <button id="confirmOrder">Confirm Order</button>
+    <br>
+    <a href="checkout.html">Edit Details</a>
+    <br>
+    <a href="index.html">Continue Shopping</a>
+  </div>
+
+  <script>
+    const customer = JSON.parse(sessionStorage.getItem("noorranCustomer") || "null");
+    const cart = JSON.parse(localStorage.getItem("noorranCart") || "[]");
+
+    const customerBox = document.getElementById("customerDetails");
+    const orderBox = document.getElementById("orderDetails");
+    const confirmButton = document.getElementById("confirmOrder");
+
+    function addDetail(parent, label, value) {
+      const p = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = label + ": ";
+      p.appendChild(strong);
+      p.appendChild(document.createTextNode(value || "Not provided"));
+      parent.appendChild(p);
+    }
+
+    if (!customer || cart.length === 0) {
+      customerBox.textContent = "Checkout details are missing. Please return to your cart and try again.";
+      orderBox.textContent = "";
+      confirmButton.disabled = true;
+    } else {
+      addDetail(customerBox, "Name", customer.name);
+      addDetail(customerBox, "Mobile", customer.phone);
+      addDetail(customerBox, "Email", customer.email);
+      addDetail(customerBox, "Address", customer.address);
+      addDetail(customerBox, "City", customer.city);
+
+      let total = 0;
+
+      cart.forEach(item => {
+        const price = Number(item.price);
+        const quantity = Number(item.quantity);
+        total += price * quantity;
+
+        const p = document.createElement("p");
+        p.textContent = ${item.name} × ${quantity} — Rs. ${(price * quantity).toLocaleString()};
+        orderBox.appendChild(p);
+      });
+
+      addDetail(orderBox, "Total", "Rs. " + total.toLocaleString());
+    }
+
+    confirmButton.addEventListener("click", () => {
+      alert("Order details checked. Online order submission is not connected yet.");
+    });
+  </script>
+</body>
+</html>
