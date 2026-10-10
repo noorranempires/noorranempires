@@ -6,7 +6,6 @@
   <title>Place Order | NOORRANEMPIRES</title>
   <style>
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       padding: 20px;
@@ -14,7 +13,6 @@
       background: #faf7ff;
       color: #2d2140;
     }
-
     .container {
       max-width: 650px;
       margin: 50px auto;
@@ -22,19 +20,16 @@
       background: white;
       border-radius: 16px;
       box-shadow: 0 5px 20px rgba(0,0,0,.08);
-      text-align: center;
     }
-
-    h1 { color: #6b35b5; }
-
+    h1 { color: #6b35b5; text-align: center; }
     .details {
       text-align: left;
       background: #faf7ff;
       padding: 18px;
       border-radius: 10px;
       overflow-wrap: anywhere;
+      margin-top: 15px;
     }
-
     a, button {
       display: inline-block;
       margin-top: 18px;
@@ -47,8 +42,9 @@
       font-weight: bold;
       cursor: pointer;
     }
-
-    .note { color: #8a5b00; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    .note { text-align: center; color: #8a5b00; }
+    #status { overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
@@ -57,11 +53,9 @@
     <p>Please check your delivery details before placing your order.</p>
 
     <div class="details" id="customerDetails"></div>
-    <div class="details" id="orderDetails" style="margin-top:15px"></div>
+    <div class="details" id="orderDetails"></div>
 
-    <p class="note">
-      Your order has not been sent to the store yet.
-    </p>
+    <p class="note" id="status">Your order has not been sent yet.</p>
 
     <button id="confirmOrder">Confirm Order</button>
     <br>
@@ -69,16 +63,22 @@
     <br>
     <a href="index.html">Continue Shopping</a>
   </div>
-  
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-    const customer = JSON.parse(sessionStorage.getItem("noorranCustomer") || "null");
-    const cart = JSON.parse(localStorage.getItem("noorranCart") || "[]");
+    emailjs.init({ publicKey: "04qmoyUpCgraNG5-z" });
+
+    const customer = JSON.parse(
+      sessionStorage.getItem("noorranCustomer") || "null"
+    );
+    const cart = JSON.parse(
+      localStorage.getItem("noorranCart") || "[]"
+    );
 
     const customerBox = document.getElementById("customerDetails");
     const orderBox = document.getElementById("orderDetails");
     const confirmButton = document.getElementById("confirmOrder");
+    const statusBox = document.getElementById("status");
 
     function addDetail(parent, label, value) {
       const p = document.createElement("p");
@@ -89,9 +89,12 @@
       parent.appendChild(p);
     }
 
+    let total = 0;
+    let orderDetails = "";
+
     if (!customer || cart.length === 0) {
-      customerBox.textContent = "Checkout details are missing. Please return to your cart and try again.";
-      orderBox.textContent = "";
+      customerBox.textContent =
+        "Checkout details are missing. Please return to your cart and try again.";
       confirmButton.disabled = true;
     } else {
       addDetail(customerBox, "Name", customer.name);
@@ -100,180 +103,64 @@
       addDetail(customerBox, "Address", customer.address);
       addDetail(customerBox, "City", customer.city);
 
-      let total = 0;
+      const lines = [];
 
       cart.forEach(item => {
         const price = Number(item.price);
         const quantity = Number(item.quantity);
-        total += price * quantity;
+        const subtotal = price * quantity;
+        total += subtotal;
+
+        lines.push(
+          `${item.name} x ${quantity} = Rs. ${subtotal.toLocaleString()}`
+        );
 
         const p = document.createElement("p");
-        p.textContent = ${item.name} × ${quantity} — Rs. ${(price * quantity).toLocaleString()};
+        p.textContent =
+          `${item.name} x ${quantity} — Rs. ${subtotal.toLocaleString()}`;
         orderBox.appendChild(p);
       });
 
+      orderDetails = lines.join("\n");
       addDetail(orderBox, "Total", "Rs. " + total.toLocaleString());
     }
 
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout | NOORRANEMPIRES</title>
-  <style>
-    * { box-sizing: border-box; }
+    confirmButton.addEventListener("click", async () => {
+      if (!customer || cart.length === 0) {
+        statusBox.textContent = "Your order details are missing.";
+        return;
+      }
 
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      background: #faf7ff;
-      color: #2d2140;
-    }
+      confirmButton.disabled = true;
+      confirmButton.textContent = "Sending Order...";
+      statusBox.textContent = "Sending your order by email...";
 
-    header {
-      background: linear-gradient(90deg, #6b35b5, #b8860b);
-      padding: 18px;
-      border-radius: 12px;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
+      try {
+        await emailjs.send(
+          "service_1b9ex9i",
+          "template_x5kq4tu",
+          {
+            customer_name: customer.name,
+            customer_phone: customer.phone,
+            customer_email: customer.email || "Not provided",
+            customer_address: customer.address,
+            customer_city: customer.city,
+            order_details: orderDetails,
+            order_total: total.toLocaleString()
+          }
+        );
 
-    header img { width: 130px; max-width: 45%; }
-    header a { color: white; text-decoration: none; font-weight: bold; }
-
-    .container {
-      max-width: 700px;
-      margin: 30px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 5px 20px rgba(0,0,0,.08);
-    }
-
-    h1, h2 { color: #6b35b5; }
-    label { display: block; margin: 16px 0 7px; font-weight: bold; }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d8cce8;
-      border-radius: 8px;
-      font-size: 16px;
-      font-family: inherit;
-    }
-
-    textarea { min-height: 90px; resize: vertical; }
-
-    .summary {
-      background: #faf7ff;
-      border-radius: 10px;
-      padding: 16px;
-      margin-top: 22px;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 22px;
-      padding: 15px;
-      border: 0;
-      border-radius: 30px;
-      background: #6b35b5;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .back { color: #6b35b5; }
-  </style>
-</head>
-<body>
-
-<header>
-  <img src="logo.png.png" alt="NOORRANEMPIRES Logo">
-  <a href="card.html">← Back to Cart</a>
-</header>
-
-<div class="container">
-  <h1>Checkout</h1>
-  <p>Enter your delivery details below.</p>
-
-  <form id="checkoutForm">
-    <label for="name">Full Name *</label>
-    <input id="name" name="name" autocomplete="name" required>
-
-    <label for="phone">Mobile Number *</label>
-    <input id="phone" name="phone" type="tel"
-      autocomplete="tel" placeholder="03XXXXXXXXX" required>
-
-    <label for="email">Email (Optional)</label>
-    <input id="email" name="email" type="email" autocomplete="email">
-
-    <label for="address">Complete Delivery Address *</label>
-    <textarea id="address" name="address"
-      autocomplete="street-address" required></textarea>
-
-    <label for="city">City *</label>
-    <input id="city" name="city" autocomplete="address-level2" required>
-
-    <div class="summary">
-      <h2>Order Summary</h2>
-      <div id="orderSummary">Loading cart...</div>
-    </div>
-
-    <button type="submit">Continue to Place Order</button>
-  </form>
-</div>
-
-<script>
-  const cart = JSON.parse(localStorage.getItem("noorranCart")) || [];
-  const summary = document.getElementById("orderSummary");
-
-  if (cart.length === 0) {
-    summary.textContent = "Your cart is empty. Please add products first.";
-    document.querySelector('button[type="submit"]').disabled = true;
-  } else {
-    const total = cart.reduce((sum, item) =>
-      sum + Number(item.price) * Number(item.quantity), 0);
-
-    summary.innerHTML = cart.map(item =>
-      `<p>${item.name} × ${item.quantity} — Rs. ${
-        (Number(item.price) * Number(item.quantity)).toLocaleString()
-      }</p>`
-    ).join("") + `<hr><h3>Total: Rs. ${total.toLocaleString()}</h3>`;
-  }
-
-  document.getElementById("checkoutForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    if (cart.length === 0) {
-      alert("Your cart is empty.");
-      return;
-    }
-
-    const customer = {
-      name: document.getElementById("name").value.trim(),
-      phone: document.getElementById("phone").value.trim(),
-      email: document.getElementById("email").value.trim(),
-      address: document.getElementById("address").value.trim(),
-      city: document.getElementById("city").value.trim()
-    };
-
-    if (!customer.name || !customer.phone ||
-        !customer.address || !customer.city) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    sessionStorage.setItem("noorranCustomer", JSON.stringify(customer));
-    window.location.href = "place-order.html";
-  });
-</script>
-
+        statusBox.textContent =
+          "Order email sent successfully! Thank you for shopping with us.";
+        confirmButton.textContent = "Order Sent";
+      } catch (error) {
+        console.error("EmailJS error:", error);
+        statusBox.textContent =
+          "Email could not be sent. Please try again later.";
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Retry Confirm Order";
+      }
+    });
+  </script>
 </body>
 </html>
