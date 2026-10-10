@@ -128,7 +128,7 @@
       `<p>${item.name} × ${item.quantity} — Rs. ${
         (Number(item.price) * Number(item.quantity)).toLocaleString()
       }</p>`
-    ).join("") + <hr><h3>Total: Rs. ${total.toLocaleString()}</h3>;
+    ).join("") + `<hr><h3>Total: Rs. ${total.toLocaleString()}</h3>`;
   }
 
   document.getElementById("checkoutForm").addEventListener("submit", function(event) {
