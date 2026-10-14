@@ -1,0 +1,24 @@
+backend:
+  name: github
+  repo: noorranempires/noorranempires
+  branch: main
+
+media_folder: "images/products"
+public_folder: "/images/products"
+
+collections:
+  - name: "products"
+    label: "Products"
+    folder: "_products"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "Product Name", name: "name", widget: "string" }
+      - { label: "Price (PKR)", name: "price", widget: "number", value_type: "int" }
+      - { label: "Product Image", name: "image", widget: "image" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Category", name: "category", widget: "string", required: false }
+      - { label: "Sizes / Colors", name: "options", widget: "string", required: false }
+      - { label: "Available", name: "available", widget: "boolean", default: true }
