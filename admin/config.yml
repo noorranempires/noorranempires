@@ -1,6 +1,6 @@
 backend:
-  name: github
-  repo: noorranempires/noorranempires
+  name: turbo-github
+  turbo_site_id: af96e28e-6d68-4a34-8833-78a0c59753b9
   branch: main
 
 media_folder: "images/products"
