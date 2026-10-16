@@ -69,3 +69,68 @@ function buyNow(name, price) {
         "We are preparing your checkout page."
     );
 }
+async function loadCMSProducts() {
+  const container = document.getElementById("cms-products");
+  if (!container) return;
+
+  try {
+    const response = await fetch("/products.json");
+
+    if (!response.ok) {
+      throw new Error("Products file could not be loaded");
+    }
+
+    const data = await response.json();
+    const products = data.products || [];
+
+    container.innerHTML = "";
+
+    const availableProducts = products.filter(
+      product => product.available !== false
+    );
+
+    if (availableProducts.length === 0) {
+      container.innerHTML = "<p>Products coming soon.</p>";
+      return;
+    }
+
+    availableProducts.forEach(product => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+
+      const image = document.createElement("img");
+      image.src = product.image;
+      image.alt = product.name;
+      image.loading = "lazy";
+
+      const title = document.createElement("h3");
+      title.textContent = product.name;
+
+      const price = document.createElement("p");
+      price.textContent = "Rs. " + Number(product.price).toLocaleString("en-PK");
+
+      const description = document.createElement("p");
+      description.textContent = product.description || "";
+
+      const addButton = document.createElement("button");
+      addButton.textContent = "Add to Cart";
+      addButton.addEventListener("click", () => {
+        addToCart(product.name, Number(product.price));
+      });
+
+      const buyButton = document.createElement("button");
+      buyButton.textContent = "Buy Now";
+      buyButton.addEventListener("click", () => {
+        buyNow(product.name, Number(product.price));
+      });
+
+      card.append(image, title, price, description, addButton, buyButton);
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error("CMS products error:", error);
+    container.innerHTML = "<p>Products load nahi ho sake. Please try again.</p>";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadCMSProducts);
