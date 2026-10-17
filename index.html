@@ -20,11 +20,18 @@
 <body>
 
 <header class="navbar">
-    <a href="#" class="logo">
+    <a href="#home" class="logo">
         <img src="logo.png.png" alt="NOORRAN EMPIRES">
     </a>
 
-    <nav class="nav-links">
+    <button class="menu-toggle"
+            id="menu-toggle"
+            aria-label="Open navigation menu"
+            aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav class="nav-links" id="nav-links">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#products">Products</a>
@@ -32,8 +39,10 @@
         <a href="#contact">Contact</a>
     </nav>
 
-    <a href="#contact" class="order-btn">Order Now</a>
-    <a href="card.html" class="cart-btn">🛒 Cart</a>
+    <div class="nav-actions">
+        <a href="#contact" class="order-btn">Order Now</a>
+        <a href="card.html" class="cart-btn">🛒 Cart</a>
+    </div>
 </header>
 
 <section class="hero" id="home">
