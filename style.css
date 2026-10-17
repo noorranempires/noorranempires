@@ -820,3 +820,24 @@ footer p {
         display: flex;
     }
 }
+/* Force mobile menu button to show */
+@media screen and (max-width: 768px) {
+    .navbar .menu-toggle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        background: #252525;
+        color: #ffffff;
+        border: 1px solid #252525;
+        border-radius: 6px;
+        font-size: 20px;
+        position: relative;
+        z-index: 1001;
+        cursor: pointer;
+    }
+}
